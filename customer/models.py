@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 
 
 class BCCustomer(models.Model):
-    No = models.CharField(max_length=10, unique=True)
+    No = models.CharField(max_length=110, unique=True)
     Name = models.CharField(max_length=100)
     SearchName = models.CharField(max_length=100)
     Name2 = models.CharField(max_length=100)
@@ -13,11 +13,11 @@ class BCCustomer(models.Model):
     Address2 = models.CharField(max_length=100)
     City = models.CharField(max_length=100)
     Contact = models.CharField(max_length=100)
-    PhoneNo = models.CharField(max_length=15)
+    PhoneNo = models.CharField(max_length=150)
     TelexNo = models.CharField(max_length=100)
     Blocked = models.CharField(max_length=100)
     DocumentSendingProfile = models.CharField(max_length=100)
-    ShiptoCode = models.CharField(max_length=10)
+    ShiptoCode = models.CharField(max_length=100)
     OurAccountNo = models.CharField(max_length=100)
     TerritoryCode = models.CharField(max_length=100)
     GlobalDimension1Code = models.CharField(max_length=100)
