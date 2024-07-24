@@ -13,10 +13,17 @@ from rest_framework import filters
 import base64
 from django.core.files.base import ContentFile
 from django.db.models import Q
+import os
 # Create your views here.
 
 def getToken():
     access_token = None
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': 'a8391b9c-4583-46c3-a449-a0de6e199161',
+        'client_secret': os.environ.get('CLIENT_SECRET'),
+        'scope': 'https://api.businesscentral.dynamics.com/.default'
+    }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
