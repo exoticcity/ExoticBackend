@@ -70,10 +70,10 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
-    vat_rate = models.FloatField(blank=True, null=True)
-    total_amount_including_vat = models.FloatField(blank=True, null=True)
-    total_amount_excluding_vat = models.FloatField(blank=True, null=True)
-    vat_amount = models.FloatField(blank=True, null=True)
+    vat_rate = models.FloatField(default=0, blank=True, null=True)
+    total_amount_including_vat = models.FloatField(default=0, blank=True, null=True)
+    total_amount_excluding_vat = models.FloatField(default=0, blank=True, null=True)
+    vat_amount = models.FloatField(default=0, blank=True, null=True)
     date_time_created = models.DateTimeField(default=datetime.datetime.today(), blank=True, null=True)
 
     def __str__(self):
