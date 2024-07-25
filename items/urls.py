@@ -16,5 +16,6 @@ urlpatterns = [
     path('getBCSalesPrice/', getPricesFromBC, name='getBCProducts'),
     path('', include(router.urls)),
     path('update_item_bulk/', updateItemBulk, name='updateItemBulk'),
-    path('update_item/<str:itemNo>/', updateItem, name='updateitem')
+    path('update_item/<str:itemNo>/', updateItem, name='updateitem'),
+    path('update_cart/<str:pk>/', updateCart, name='updateCart'),
 ]
