@@ -14,13 +14,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Content
 from django.urls import reverse 
 import json
 from django.core.mail import send_mail
 from django.conf import settings
-import mailtrap as mt
 User = get_user_model()
 
 # Create your views here.
