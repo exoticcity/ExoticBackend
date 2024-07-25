@@ -565,3 +565,53 @@ class CartAPIViewset(viewsets.ViewSet):
         cart = get_object_or_404(queryset)
         cart.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+from rest_framework.decorators import api_view
+@api_view(['PUT'])
+def updateCart(request, pk=None):
+        try:
+            cust= Customer.objects.get(customer_id=pk)
+            queryset = Cart.objects.filter(customer=cust)
+            cart = get_object_or_404(queryset)
+            items_to_update = request.data["items_to_update"]
+            cart_amount_including_vat = 0
+            cart_amount_excluding_vat = 0
+            cart_vat_amount = 0
+            for item in items_to_update:
+                print(item)
+                item_created, created = CartItem.objects.update_or_create(
+                            cart= cart,
+                            product = Product.objects.get(ItemNo=item["itemNo"]),
+                            defaults = {
+                                'vat_rate' : Product.objects.get(ItemNo=item["itemNo"]).vat,
+                                'quantity' : item["quantity"]
+                            },
+                    )
+                print("OK")
+                print(Product.objects.get(ItemNo=item["itemNo"]).ItemNo)
+                print(Customer.objects.get(customer_id=pk).CustomerPriceGroup)
+                print(item_created.quantity)
+                response = getFuncPrice(Product.objects.get(ItemNo=item["itemNo"]).ItemNo, Customer.objects.get(customer_id=pk).CustomerPriceGroup, item_created.quantity)
+                # response = requests.get(f'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net/items/getPrice/{Product.objects.get(ItemNo=item["itemNo"]).ItemNo}/{Customer.objects.get(customer_id=pk).CustomerPriceGroup}/{item_created.quantity}')
+                print(response)
+                data = response
+                item_created.total_amount_excluding_vat = round(round(float(data["price"]), 2) * item_created.quantity , 2)
+                item_created.total_amount_including_vat = round(( ((round(float(data["price"]), 2))*((item_created.vat_rate/100)*item_created.quantity)) + (round(round(float(data["price"]), 2) * item_created.quantity , 2)) ), 2)
+                item_created.save()
+                item_created.vat_amount = round((item_created.total_amount_including_vat - item_created.total_amount_excluding_vat) ,2)
+                item_created.save()
+            for created in CartItem.objects.filter(cart=cart):
+                print(created.vat_amount)
+                cart_amount_including_vat = float(cart_amount_including_vat) + float(created.total_amount_including_vat)
+                cart_amount_excluding_vat = float(cart_amount_excluding_vat) + float(created.total_amount_excluding_vat)
+                cart_vat_amount = float(cart_vat_amount) + float(created.vat_amount)
+
+            cart.total_amount_including_vat = cart_amount_including_vat
+            cart.total_amount_excluding_vat = cart_amount_excluding_vat
+            cart.vat_amount = cart_vat_amount
+            cart.save()
+            serializer = CartSerializer(cart)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
