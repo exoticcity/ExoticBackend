@@ -441,47 +441,46 @@ class CartAPIViewset(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        return JsonResponse(str(request.data)
-        # try:
-        #     customer = Customer.objects.get(customer_id=request.data['customer'])
-        #     items = request.data['items_in_cart']
-        #     try:
-        #         cart = Cart.objects.create(
-        #             customer = customer,
-        #             date_time_created = datetime.datetime.today()
-        #         )
-        #         cart_amount_including_vat = 0
-        #         cart_amount_excluding_vat = 0
-        #         cart_vat_amount = 0
-        #         if cart:
-        #             for item in items:
-        #                 item_created = CartItem.objects.create(
-        #                     cart= cart,
-        #                     product = Product.objects.get(ItemNo=item["itemNo"]),
-        #                     vat_rate = Product.objects.get(ItemNo=item["itemNo"]).vat,
-        #                     quantity = item["quantity"]
-        #                 )
-        #                 response = requests.get(f'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net/items/getPrice/{Product.objects.get(ItemNo=item["itemNo"]).ItemNo}/{Customer.objects.get(customer_id=request.data["customer"]).CustomerPriceGroup}/{item_created.quantity}')
-        #                 data = response.json()
-        #                 item_created.total_amount_excluding_vat = round(round(float(data['price']), 2) * item_created.quantity , 2)
-        #                 item_created.total_amount_including_vat = round(( ((round(float(data['price']), 2))*((item_created.vat_rate/100)*item_created.quantity)) + (round(round(float(data['price']), 2) * item_created.quantity , 2)) ), 2)
-        #                 item_created.save()
-        #                 item_created.vat_amount = round((item_created.total_amount_including_vat - item_created.total_amount_excluding_vat) ,2)
-        #                 item_created.save()
-        #                 cart_amount_including_vat = cart_amount_including_vat + item_created.total_amount_including_vat
-        #                 cart_amount_excluding_vat = cart_amount_excluding_vat + item_created.total_amount_excluding_vat
-        #                 cart_vat_amount = cart_vat_amount + item_created.vat_amount
+        try:
+            customer = Customer.objects.get(customer_id=request.data['customer'])
+            items = request.data['items_in_cart']
+            try:
+                cart = Cart.objects.create(
+                    customer = customer,
+                    date_time_created = datetime.datetime.today()
+                )
+                cart_amount_including_vat = 0
+                cart_amount_excluding_vat = 0
+                cart_vat_amount = 0
+                if cart:
+                    for item in items:
+                        item_created = CartItem.objects.create(
+                            cart= cart,
+                            product = Product.objects.get(ItemNo=item["itemNo"]),
+                            vat_rate = Product.objects.get(ItemNo=item["itemNo"]).vat,
+                            quantity = item["quantity"]
+                        )
+                        response = requests.get(f'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net/items/getPrice/{Product.objects.get(ItemNo=item["itemNo"]).ItemNo}/{Customer.objects.get(customer_id=request.data["customer"]).CustomerPriceGroup}/{item_created.quantity}')
+                        data = response.json()
+                        item_created.total_amount_excluding_vat = round(round(float(data['price']), 2) * item_created.quantity , 2)
+                        item_created.total_amount_including_vat = round(( ((round(float(data['price']), 2))*((item_created.vat_rate/100)*item_created.quantity)) + (round(round(float(data['price']), 2) * item_created.quantity , 2)) ), 2)
+                        item_created.save()
+                        item_created.vat_amount = round((item_created.total_amount_including_vat - item_created.total_amount_excluding_vat) ,2)
+                        item_created.save()
+                        cart_amount_including_vat = cart_amount_including_vat + item_created.total_amount_including_vat
+                        cart_amount_excluding_vat = cart_amount_excluding_vat + item_created.total_amount_excluding_vat
+                        cart_vat_amount = cart_vat_amount + item_created.vat_amount
 
-        #             cart.total_amount_including_vat = cart_amount_including_vat
-        #             cart.total_amount_excluding_vat = cart_amount_excluding_vat
-        #             cart.vat_amount = cart_vat_amount
-        #             cart.save()
-        #         return Response({"message": "Cart Created Successfully!"}, status=status.HTTP_201_CREATED)
-        #     except Exception as e:
-        #         return Response({"message": "Cart Already Exists for this Customer! Refresh! If you still facing same issue try contact your administrator!"}, status=status.HTTP_400_BAD_REQUEST) 
+                    cart.total_amount_including_vat = cart_amount_including_vat
+                    cart.total_amount_excluding_vat = cart_amount_excluding_vat
+                    cart.vat_amount = cart_vat_amount
+                    cart.save()
+                return Response({"message": "Cart Created Successfully!"}, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({"message": "Cart Already Exists for this Customer! Refresh! If you still facing same issue try contact your administrator!"}, status=status.HTTP_400_BAD_REQUEST) 
 
-        # except Exception as e:
-        #     raise ValidationError(e)
+        except Exception as e:
+            raise ValidationError(e)
 
 
     def retrieve(self, request, pk=None):
