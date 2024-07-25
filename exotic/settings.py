@@ -39,6 +39,7 @@ ALLOWED_HOSTS = [
     'exoticshop.eu',
     'http://exoticbackend.exoticshop.eu',
     'exoticbackend.exoticshop.eu',
+    'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net',
     'exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
 ]
 CORS_ALLOWED_ORIGINS = [
@@ -47,7 +48,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://exoticshop.eu',
     'http://exoticshop.eu',
     'http://exoticbackend.exoticshop.eu',
-    'https://exoticbackend.exoticshop.eu'
+    'https://exoticbackend.exoticshop.eu',
+    'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
     # Add other allowed origins as needed
 ]
 
