@@ -460,7 +460,7 @@ class CartAPIViewset(viewsets.ViewSet):
                             vat_rate = Product.objects.get(ItemNo=item["itemNo"]).vat,
                             quantity = item["quantity"]
                         )
-                        response = requests.get(f'https://exoticbackend.exoticshop.eu/items/getPrice/{Product.objects.get(ItemNo=item["itemNo"]).ItemNo}/{Customer.objects.get(customer_id=request.data["customer"]).CustomerPriceGroup}/{item_created.quantity}')
+                        response = requests.get(f'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net/items/getPrice/{Product.objects.get(ItemNo=item["itemNo"]).ItemNo}/{Customer.objects.get(customer_id=request.data["customer"]).CustomerPriceGroup}/{item_created.quantity}')
                         data = response.json()
                         item_created.total_amount_excluding_vat = round(round(float(data['price']), 2) * item_created.quantity , 2)
                         item_created.total_amount_including_vat = round(( ((round(float(data['price']), 2))*((item_created.vat_rate/100)*item_created.quantity)) + (round(round(float(data['price']), 2) * item_created.quantity , 2)) ), 2)
@@ -509,7 +509,7 @@ class CartAPIViewset(viewsets.ViewSet):
                                 'quantity' : item["quantity"]
                             },
                     )
-                response = requests.get(f'https://exoticbackend.exoticshop.eu/items/getPrice/{Product.objects.get(ItemNo=item["itemNo"]).ItemNo}/{Customer.objects.get(customer_id=pk).CustomerPriceGroup}/{item_created.quantity}')
+                response = requests.get(f'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net/items/getPrice/{Product.objects.get(ItemNo=item["itemNo"]).ItemNo}/{Customer.objects.get(customer_id=pk).CustomerPriceGroup}/{item_created.quantity}')
                 data = response.json()
                 item_created.total_amount_excluding_vat = round(round(float(data['price']), 2) * item_created.quantity , 2)
                 item_created.total_amount_including_vat = round(( ((round(float(data['price']), 2))*((item_created.vat_rate/100)*item_created.quantity)) + (round(round(float(data['price']), 2) * item_created.quantity , 2)) ), 2)
