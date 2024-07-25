@@ -433,6 +433,28 @@ def updateItemBulk(self):
     # else:
     #     return JsonResponse({"error": "Product Not Found"})
 
+def getFuncPrice(ItemNo, group, qnty):
+    Price = 0
+    try:
+        items = SalesPrice.objects.filter(ItemNo=ItemNo)
+        for item in items:
+            if 'Campaign' in item.salestype and item.EndDate >= datetime.date.today():
+                filteredPrice = SalesPrice.objects.filter(ItemNo=ItemNo, salestype='Campaign').first()
+                if filteredPrice:
+                    Price = filteredPrice.UnitPrice
+                else:
+                    return JsonResponse({'error': 'Campaign price not found!'})
+            else:
+                filteredPrice = SalesPrice.objects.filter(ItemNo=ItemNo, Salecode=group, MinimumQuantity__lte=qnty).order_by('MinimumQuantity').last()
+                if filteredPrice:
+                    Price = filteredPrice.UnitPrice
+                else:
+                    return JsonResponse({'error': 'Regular price not found!'})
+    except Exception as e:
+        return JsonResponse({'error': 'Product Not Found! - ' + str(e)})
+    
+    return {'price': filteredPrice.UnitPrice}
+
 class CartAPIViewset(viewsets.ViewSet):
 
     def list(self, request):
@@ -513,7 +535,7 @@ class CartAPIViewset(viewsets.ViewSet):
                 print(Product.objects.get(ItemNo=item["itemNo"]).ItemNo)
                 print(Customer.objects.get(customer_id=pk).CustomerPriceGroup)
                 print(item_created.quantity)
-                response = getPrice(self, Product.objects.get(ItemNo=item["itemNo"]).ItemNo, Customer.objects.get(customer_id=pk).CustomerPriceGroup, item_created.quantity)
+                response = getFuncPrice(Product.objects.get(ItemNo=item["itemNo"]).ItemNo, Customer.objects.get(customer_id=pk).CustomerPriceGroup, item_created.quantity)
                 # response = requests.get(f'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net/items/getPrice/{Product.objects.get(ItemNo=item["itemNo"]).ItemNo}/{Customer.objects.get(customer_id=pk).CustomerPriceGroup}/{item_created.quantity}')
                 print(response)
                 data = response
