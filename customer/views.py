@@ -344,25 +344,28 @@ class GetUserByCustomerIdView(generics.RetrieveAPIView):
         
 
 def updateCustomer(self, custNo):
-    url = f"https://api.businesscentral.dynamics.com/v2.0/Live/api/bctech/demo/v2.0/Companies(f03f6225-081c-ec11-bb77-000d3abcd65f)/customer?$filter = No eq '{custNo}'"
-    response = requests.get(url, headers=getToken())
-    if Customer.objects.filter(customer_id=custNo).exists():
-        customer = Customer.objects.get(customer_id=custNo)
-        customer.name = response.json()['value'][0]['Name']
-        customer.email = response.json()['value'][0]['EMail']
-        customer.addressLine1 = response.json()['value'][0]['Address']
-        customer.addressLine2 = response.json()['value'][0]['Address2']
-        customer.region_code = response.json()['value'][0]['CountryRegionCode']
-        customer.language_code = response.json()['value'][0]['LanguageCode']
-        customer.city = response.json()['value'][0]['City']
-        customer.enterprise_no = response.json()['value'][0]['EnterpriseNo']
-        customer.CustomerPriceGroup = response.json()['value'][0]['CustomerPriceGroup']
-        customer.Vat = response.json()['value'][0]['VATRegistrationNo']
-        customer.postalCode = response.json()['value'][0]['PostCode']
-        customer.phoneNumber = response.json()['value'][0]['PhoneNo']
-        customer.mobile_phoneNumber = response.json()['value'][0]['TelexNo']
-        customer.is_active = True
-        customer.save()
-        return JsonResponse({"success": "Customer Verified"})
-    else:
-        return JsonResponse({"error": "Customer Not Found"})
+    try:
+        url = f"https://api.businesscentral.dynamics.com/v2.0/Live/api/bctech/demo/v2.0/Companies(f03f6225-081c-ec11-bb77-000d3abcd65f)/customer?$filter = No eq '{custNo}'"
+        response = requests.get(url, headers=getToken())
+        if Customer.objects.filter(customer_id=custNo).exists():
+            customer = Customer.objects.get(customer_id=custNo)
+            customer.name = response.json()['value'][0]['Name']
+            customer.email = response.json()['value'][0]['EMail']
+            customer.addressLine1 = response.json()['value'][0]['Address']
+            customer.addressLine2 = response.json()['value'][0]['Address2']
+            customer.region_code = response.json()['value'][0]['CountryRegionCode']
+            customer.language_code = response.json()['value'][0]['LanguageCode']
+            customer.city = response.json()['value'][0]['City']
+            customer.enterprise_no = response.json()['value'][0]['EnterpriseNo']
+            customer.CustomerPriceGroup = response.json()['value'][0]['CustomerPriceGroup']
+            customer.Vat = response.json()['value'][0]['VATRegistrationNo']
+            customer.postalCode = response.json()['value'][0]['PostCode']
+            customer.phoneNumber = response.json()['value'][0]['PhoneNo']
+            customer.mobile_phoneNumber = response.json()['value'][0]['TelexNo']
+            customer.is_active = True
+            customer.save()
+            return JsonResponse({"success": "Customer Verified"})
+        else:
+            return JsonResponse({"error": "Customer Not Found"})
+    except Exception as e:
+        return JsonResponse({"error": f"Customer Not Found or {e}"}) 
