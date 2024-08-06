@@ -208,7 +208,7 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'info@exoticcity.be'  # Your Microsoft 365 email
 
-EMAIL_HOST_PASSWORD = '925714'  # Your Microsoft 365 email password
+EMAIL_HOST_PASSWORD = 'ptfwpxvnpbyttwzz'  # Your Microsoft 365 email password
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
