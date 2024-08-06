@@ -257,29 +257,35 @@ def createUserBC(request):
     password = serializer.validated_data['password']
     try:
         bc_customer = BCCustomer.objects.get(EMail=email)
-        User.objects.create(
-            name=bc_customer.Name,
-            email=bc_customer.EMail,
-            addressLine1=bc_customer.Address,
-            addressLine2=bc_customer.Address2,
-            region_code=bc_customer.County,
-            language_code=bc_customer.LanguageCode,
-            city=bc_customer.City,
-            enterprise_no=bc_customer.EnterpriseNo,
-            postalCode=bc_customer.PostCode,
-            phoneNumber=bc_customer.PhoneNo,
-            mobile_phoneNumber=bc_customer.TelexNo,
-            customer_id=bc_customer.No,
-            CustomerPriceGroup=bc_customer.CustomerPriceGroup,
-            password=password,
-            Vat=bc_customer.VATRegistrationNo,
-            is_active=True
-        )
-        subject = "User Created!"
-        message = f'Customer Registered from {email}.'
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = ['info@exoticcity.be']
-        send_mail(subject, message, email_from, recipient_list)
+        try:
+            User.objects.create(
+                name=bc_customer.Name,
+                email=bc_customer.EMail,
+                addressLine1=bc_customer.Address,
+                addressLine2=bc_customer.Address2,
+                region_code=bc_customer.County,
+                language_code=bc_customer.LanguageCode,
+                city=bc_customer.City,
+                enterprise_no=bc_customer.EnterpriseNo,
+                postalCode=bc_customer.PostCode,
+                phoneNumber=bc_customer.PhoneNo,
+                mobile_phoneNumber=bc_customer.TelexNo,
+                customer_id=bc_customer.No,
+                CustomerPriceGroup=bc_customer.CustomerPriceGroup,
+                password=password,
+                Vat=bc_customer.VATRegistrationNo,
+                is_active=True
+            )
+        except:
+            return Response("Customer Already Exists!", status=status.HTTP_404_NOT_FOUND)
+        try:
+            subject = "User Created!"
+            message = f'Customer Registered from {email}.'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = ['info@exoticcity.be']
+            send_mail(subject, message, email_from, recipient_list)
+        except:
+            return Response("Authentication For SMTP Failed!", status=status.HTTP_404_NOT_FOUND)
     except BCCustomer.DoesNotExist:
         return Response("customer not exist", status=status.HTTP_404_NOT_FOUND)
         # Handle the case where BCCustomer with the given email does not exist
