@@ -256,7 +256,7 @@ def createUserBC(request):
     email = serializer.validated_data['email']
     password = serializer.validated_data['password']
     try:
-        bc_customer = BCCustomer.objects.get(EMail=email)
+        bc_customer = BCCustomer.objects.filter(EMail=email).last()
         try:
             User.objects.create(
                 name=bc_customer.Name,
