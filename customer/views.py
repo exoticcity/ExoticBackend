@@ -33,7 +33,7 @@ def forget_password(request):
         if user:
             token = default_token_generator.make_token(user)
             reset_link = request.build_absolute_uri(reverse('reset_password', args=[user.pk, token]))
-            reset_link = f'https://exoticshop.eu/#/customers/reset-password/{user.pk}/{token}/'
+            reset_link = f'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net/#/customers/reset-password/{user.pk}/{token}/'
             print(reset_link)
         #     mail = mt.Mail(
         #     sender=mt.Address(email="mailtrap@demomailtrap.com", name="Mailtrap Test"),
