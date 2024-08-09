@@ -14,13 +14,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Content
 from django.urls import reverse 
 import json
 from django.core.mail import send_mail
 from django.conf import settings
-import mailtrap as mt
 User = get_user_model()
 
 # Create your views here.
@@ -375,3 +372,141 @@ def updateCustomer(self, custNo):
             return JsonResponse({"error": "Customer Not Found"})
     except Exception as e:
         return JsonResponse({"error": f"Customer Not Found or {e}"}) 
+
+from django.db import transaction
+from django.db.models import Window, F
+from django.db.models.functions import RowNumber
+
+def delete_duplicate_users(self):
+    # Begin a transaction
+    with transaction.atomic():
+        # Annotate each user with a row number, partitioned by email and ordered by 'id'
+        users_with_row_number = BCCustomer.objects.annotate(
+            row_number=Window(
+                expression=RowNumber(),
+                partition_by=[F('EMail')],
+                order_by=F('id').asc()
+            )
+        )
+
+        # Use a list comprehension to collect IDs of duplicates (rows with row_number greater than 1)
+        duplicate_ids = [user.id for user in users_with_row_number if user.row_number > 1]
+
+        # Delete duplicates using the list of IDs
+        BCCustomer.objects.filter(id__in=duplicate_ids).delete()
+def deleteUser(self, user_id):
+    try:
+        if BCCustomer.objects.filter(No=user_id).exists():
+            BCCustomer.objects.get(No=user_id).delete()
+        if Customer.objects.filter(customer_id=user_id).exists():
+            Customer.objects.get(customer_id=user_id).delete()
+        return JsonResponse({"success": "Customer Deleted From Web!"}) 
+    except Exception as e:
+        return JsonResponse({"error": f"{e}"}) 
+    
+def syncCustomerOnWeb(self, user_id):
+    try:
+        url = f"https://api.businesscentral.dynamics.com/v2.0/Live/api/bctech/demo/v2.0/Companies(f03f6225-081c-ec11-bb77-000d3abcd65f)/customer?$filter = No eq '{user_id}'"
+        response = requests.get(url, headers=getToken())
+        if response.status_code == 200:
+            data = response.json()
+            for customer in data['value']:
+                cust, created = BCCustomer.objects.update_or_create(
+                    No=customer['No'],
+                    EMail= customer['EMail'],
+                    defaults={
+                        'Name': customer['Name'],
+                        'SearchName': customer['SearchName'],
+                        'Name2': customer['Name2'],
+                        'Address': customer['Address'],
+                        'Address2': customer['Address2'],
+                        'City': customer['City'],
+                        'Contact': customer['Contact'],
+                        'PhoneNo': customer['PhoneNo'],
+                        'Blocked': customer['Blocked'],
+                        'DocumentSendingProfile': customer['DocumentSendingProfile'],
+                        'ShiptoCode': customer['ShiptoCode'],
+                        'OurAccountNo': customer['OurAccountNo'],
+                        'TerritoryCode': customer['TerritoryCode'],
+                        'GlobalDimension1Code': customer['GlobalDimension1Code'],
+                        'GlobalDimension2Code': customer['GlobalDimension2Code'],
+                        'ChainName': customer['ChainName'],
+                        'BudgetedAmount': customer['BudgetedAmount'],
+                        'CreditLimitLCY': customer['CreditLimitLCY'],
+                        'CustomerPostingGroup': customer['CustomerPostingGroup'],
+                        'CurrencyCode': customer['CurrencyCode'],
+                        'CustomerPriceGroup': customer['CustomerPriceGroup'],
+                        'LanguageCode': customer['LanguageCode'],
+                        'RegistrationNumber': customer['RegistrationNumber'],
+                        'StatisticsGroup': customer['StatisticsGroup'],
+                        'PaymentTermsCode': customer['PaymentTermsCode'],
+                        'SalespersonCode': customer['SalespersonCode'],
+                        'ShipmentMethodCode': customer['ShipmentMethodCode'],
+                        'PlaceofExport': customer['PlaceofExport'],
+                        'CustomerDiscGroup': customer['CustomerDiscGroup'],
+                        'CountryRegionCode': customer['CountryRegionCode'],
+                        'Amount': customer['Amount'],
+                        'DebitAmount': customer['DebitAmount'],
+                        'CreditAmount': customer['CreditAmount'],
+                        'InvoiceAmounts': customer['InvoiceAmounts'],
+                        'OtherAmountsLCY': customer['OtherAmountsLCY'],
+                        'Comment': customer['Comment'],
+                        'LastStatementNo': customer['LastStatementNo'],
+                        'Prepayment': customer['Prepayment'],
+                        'PartnerType': customer['PartnerType'],
+                        'Payments': customer['Payments'],
+                        'PostCode': customer['PostCode'],
+                        'PrintStatements': customer['PrintStatements'],
+                        'PricesIncludingVAT': customer['PricesIncludingVAT'],
+                        'ProfitLCY': customer['ProfitLCY'],
+                        'BilltoCustomerNo': customer['BilltoCustomerNo'],
+                        'Priority': customer['Priority'],
+                        'PaymentMethodCode': customer['PaymentMethodCode'],
+                        'LastModifiedDateTime': customer['LastModifiedDateTime'],
+                        'GlobalDimension1Filter': customer['GlobalDimension1Filter'],
+                        'GlobalDimension2Filter': customer['GlobalDimension2Filter'],
+                        'Balance': customer['Balance'],
+                        'BalanceLCY': customer['BalanceLCY'],
+                        'BalanceDue': customer['BalanceDue'],
+                        'NetChange': customer['NetChange'],
+                        'NetChangeLCY': customer['NetChangeLCY'],
+                        'SalesLCY': customer['SalesLCY'],
+                        'InvAmountsLCY': customer['InvAmountsLCY'],
+                        'InvDiscountsLCY': customer['InvDiscountsLCY'],
+                        'NoofInvoices': customer['NoofInvoices'],
+                        'InvoiceDiscCode': customer['InvoiceDiscCode'],
+                        'InvoiceCopies': customer['InvoiceCopies'],
+                        'PmtDiscountsLCY': customer['PmtDiscountsLCY'],
+                        'PmtToleranceLCY': customer['PmtToleranceLCY'],
+                        'BalanceDueLCY': customer['BalanceDueLCY'],
+                        'PaymentsLCY': customer['PaymentsLCY'],
+                        'CrMemoAmounts': customer['CrMemoAmounts'],
+                        'CrMemoAmountsLCY': customer['CrMemoAmountsLCY'],
+                        'FinanceChargeMemoAmounts': customer['FinanceChargeMemoAmounts'],
+                        'ShippedNotInvoiced': customer['ShippedNotInvoiced'],
+                        'ShippedNotInvoicedLCY': customer['ShippedNotInvoicedLCY'],
+                        'ShippingAgentCode': customer['ShippingAgentCode'],
+                        'ApplicationMethod': customer['ApplicationMethod'],
+                        'LocationCode': customer['LocationCode'],
+                        'FaxNo': customer['FaxNo'],
+                        'VATBusPostingGroup': customer['VATBusPostingGroup'],
+                        'VATRegistrationNo': customer['VATRegistrationNo'],
+                        'CombineShipments': customer['CombineShipments'],
+                        'GenBusPostingGroup': customer['GenBusPostingGroup'],
+                        'GLN': customer['GLN'],
+                        'County': customer['County'],
+                        'EORINumber': customer['EORINumber'],
+                        'UseGLNinElectronicDocument': customer['UseGLNinElectronicDocument'],
+                        'ReminderTermsCode': customer['ReminderTermsCode'],
+                        'ReminderAmounts': customer['ReminderAmounts'],
+                        'ReminderAmountsLCY': customer['ReminderAmountsLCY'],
+                        'TaxAreaCode': customer['TaxAreaCode'],
+                        'TaxAreaID': customer['TaxAreaID'],
+                        'TaxLiable': customer['TaxLiable'],
+                        'CurrencyFilter': customer['CurrencyFilter'],
+                        'EnterpriseNo': customer['EnterpriseNo']
+                    }
+                )
+            return JsonResponse({'message': "Customers Created!"})
+    except Exception as e:
+        return JsonResponse({'message': f"{e}"})
