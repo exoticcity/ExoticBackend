@@ -20,4 +20,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('forget-password/', forget_password, name='forget_password'),
     path('reset-password/<int:user_id>/<str:token>/', reset_password, name='reset_password'),
+    path('deleteUser/<str:user_id>/', deleteUser, name='deleteUser'),
+    path('syncCustomerOnWeb/<str:user_id>/', syncCustomerOnWeb, name='syncCustomerOnWeb'),
 ]
