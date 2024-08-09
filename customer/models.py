@@ -3,7 +3,6 @@ from django.contrib.auth.models import BaseUserManager, PermissionsMixin, Abstra
 from django.contrib.auth.hashers import make_password
 # Create your models here.
 
-
 class BCCustomer(models.Model):
     No = models.CharField(max_length=110, unique=True)
     Name = models.CharField(max_length=100)
