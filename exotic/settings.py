@@ -53,8 +53,11 @@ CORS_ALLOWED_ORIGINS = [
     'http://exoticshop.eu',
     'http://exoticbackend.exoticshop.eu',
     'https://exoticbackend.exoticshop.eu',
-    'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
-    'http://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
+    'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net',
+    'http://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net',
+    'http://exoticcity-a0dfd0ddc0h2h9hb',
+    'https://exoticcity-a0dfd0ddc0h2h9hb',
+    'exoticcity-a0dfd0ddc0h2h9hb',
     'exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
     # Add other allowed origins as needed
 ]
