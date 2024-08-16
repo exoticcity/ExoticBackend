@@ -30,18 +30,18 @@ DEBUG = True
 
 # ALLOWED_HOSTS = ["127.0.0.1", "exoticbackend.exoticshop.eu", "localhost", "localhost:5174"]
 
-# ALLOWED_HOSTS = [
-#     'http://localhost:5174',
-#     'localhost:5174',
-#     'localhost',
-#     '127.0.0.1',
-#     'https://exoticshop.eu',
-#     'exoticshop.eu',
-#     'http://exoticbackend.exoticshop.eu',
-#     'exoticbackend.exoticshop.eu',
-#     'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net',
-#     'exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
-# ]
+ALLOWED_HOSTS = [
+    'http://localhost:5174',
+    'localhost:5174',
+    'localhost',
+    '127.0.0.1',
+    'https://exoticshop.eu',
+    'exoticshop.eu',
+    'http://exoticbackend.exoticshop.eu',
+    'exoticbackend.exoticshop.eu',
+    'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net',
+    'exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
+]
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5174',
     'http://localhost',
