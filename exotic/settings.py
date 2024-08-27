@@ -64,14 +64,21 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allows all origins, adjust as needed
 
-# CORS_ORIGIN_WHITELIST = [
-#     'https://exoticshop.eu',
-#     'exoticshop.eu',
-#     'localhost:5173',
-#     'http://localhost:5174',
-#     'http://exoticbackend.exoticshop.eu',
-#     'exoticbackend.exoticshop.eu'
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:5174',
+    'http://localhost',
+    'https://exoticshop.eu',
+    'http://exoticshop.eu',
+    'http://exoticbackend.exoticshop.eu',
+    'https://exoticbackend.exoticshop.eu',
+    'https://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net',
+    'http://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net',
+    'http://exoticcity-a0dfd0ddc0h2h9hb',
+    'https://exoticcity-a0dfd0ddc0h2h9hb',
+    'exoticcity-a0dfd0ddc0h2h9hb',
+    'exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
+    # Add other allowed origins as needed
+]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
