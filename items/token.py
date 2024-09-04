@@ -89,7 +89,7 @@ def updateJobs():
                         'GTIN': item['GTIN'],
                         'PurchasingCode': item['PurchasingCode'],
                         'LastDateTimeModified': item['LastDateTimeModified'],
-                        'LastDateTimeModified': item['LastDateTimeModified'],
+                        # 'LastDateTimeModified': item['LastDateTimeModified'],
                         # Storing picture in the image field
                         # 'Picture': base64_image['picture']
                     }
