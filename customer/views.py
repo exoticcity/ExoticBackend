@@ -514,7 +514,7 @@ def syncCustomerOnWeb(self, user_id):
 @api_view(['POST'])
 def bcEmailValidation(request):
     email = request.data.get('email').lower()
-    if BCCustomer.objects.filter(EMail=email).exists() and Customer.objects.filter(email):
+    if BCCustomer.objects.filter(EMail=email).exists() and Customer.objects.filter(email=email).exists():
         return Response(data="Customer Already Exists in Bussiness Central!", status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(data="OK!", status=status.HTTP_200_OK)
