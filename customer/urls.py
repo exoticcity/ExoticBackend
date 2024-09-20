@@ -22,4 +22,5 @@ urlpatterns = [
     path('reset-password/<int:user_id>/<str:token>/', reset_password, name='reset_password'),
     path('deleteUser/<str:user_id>/', deleteUser, name='deleteUser'),
     path('syncCustomerOnWeb/<str:user_id>/', syncCustomerOnWeb, name='syncCustomerOnWeb'),
+    path('bcemailvalidation/', bcEmailValidation, name='bcemailvalidation'),
 ]
