@@ -24,7 +24,7 @@ User = get_user_model()
 def forget_password(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        email = data.get('email')
+        email = data.get('email').lower()
         print(email)
         user = User.objects.filter(email=email).first()
         if user:
@@ -226,7 +226,7 @@ def getCustomersFromBC(request, *args, **kwargs):
                         'GenBusPostingGroup': customer['GenBusPostingGroup'],
                         'GLN': customer['GLN'],
                         'County': customer['County'],
-                        'EMail': customer['EMail'],
+                        'EMail': customer['EMail'].lower(),
                         'EORINumber': customer['EORINumber'],
                         'UseGLNinElectronicDocument': customer['UseGLNinElectronicDocument'],
                         'ReminderTermsCode': customer['ReminderTermsCode'],
@@ -250,14 +250,14 @@ def createUserBC(request):
     serializer = CreateUserFromBc(
         data=request.data, context={'request': request})
     serializer.is_valid(raise_exception=True)
-    email = serializer.validated_data['email']
+    email = serializer.validated_data['email'].lower()
     password = serializer.validated_data['password']
     try:
         bc_customer = BCCustomer.objects.filter(EMail=email).last()
         try:
             User.objects.create(
                 name=bc_customer.Name,
-                email=bc_customer.EMail,
+                email=bc_customer.EMail.lower(),
                 addressLine1=bc_customer.Address,
                 addressLine2=bc_customer.Address2,
                 region_code=bc_customer.County,
@@ -353,7 +353,7 @@ def updateCustomer(self, custNo):
         if Customer.objects.filter(customer_id=custNo).exists():
             customer = Customer.objects.get(customer_id=custNo)
             customer.name = response.json()['value'][0]['Name']
-            customer.email = response.json()['value'][0]['EMail']
+            customer.email = response.json()['value'][0]['EMail'].lower()
             customer.addressLine1 = response.json()['value'][0]['Address']
             customer.addressLine2 = response.json()['value'][0]['Address2']
             customer.region_code = response.json()['value'][0]['CountryRegionCode']
@@ -413,7 +413,7 @@ def syncCustomerOnWeb(self, user_id):
             for customer in data['value']:
                 cust, created = BCCustomer.objects.update_or_create(
                     No=customer['No'],
-                    EMail= customer['EMail'],
+                    EMail= customer['EMail'].lower(),
                     defaults={
                         'Name': customer['Name'],
                         'SearchName': customer['SearchName'],
@@ -510,3 +510,11 @@ def syncCustomerOnWeb(self, user_id):
             return JsonResponse({'message': "Customers Created!"})
     except Exception as e:
         return JsonResponse({'message': f"{e}"})
+    
+@api_view(['POST'])
+def bcEmailValidation(request):
+    email = request.data.get('email').lower()
+    if BCCustomer.objects.filter(EMail=email).exists() and Customer.objects.filter(email):
+        return Response(data="Customer Already Exists in Bussiness Central!", status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(data="OK!", status=status.HTTP_200_OK)
