@@ -518,3 +518,5 @@ def bcEmailValidation(request):
         return Response(data="Customer Already Exists in Bussiness Central!", status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(data="OK!", status=status.HTTP_200_OK)
+    
+    # CHECk
