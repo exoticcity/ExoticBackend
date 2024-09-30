@@ -295,7 +295,7 @@ def loginApi(request):
     serializer = LoginSerializers(
         data=request.data, context={'request': request})
     serializer.is_valid(raise_exception=True)
-    user = serializer.validated_data['user']
+    user = serializer.validated_data['user'].lower()
     password = serializer.validated_data['password']
     authenticate(request, username=user, password=password)
     login(request, user)
