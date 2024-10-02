@@ -30,7 +30,7 @@ class LoginSerializers(serializers.Serializer):
     )
 
     def validate(self, attrs):
-        username = attrs.get('username')
+        username = attrs.get('username').lower()
         password = attrs.get('password')
 
         if username and password:
