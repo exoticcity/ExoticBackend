@@ -520,3 +520,25 @@ def bcEmailValidation(request):
         return Response(data="OK!", status=status.HTTP_200_OK)
     
     # CHECk
+
+@api_view(['GET'])
+def inactiveUserFromWeb(self, customerNo):
+    try:
+        cust = Customer.objects.get(customer_id=customerNo)
+        cust.is_active= False
+        cust.save()
+        return Response('Customer Blocked From Web Store!', status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response(f'Customer Not Found! {e}', status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def changeEmailFromWeb(self, customerNo, email):
+    try:
+        cust = Customer.objects.get(customer_id=customerNo)
+        cust.email= email
+        cust.save()
+        return Response('Email Changed From Web Store!', status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response(f'Customer Not Found! {e}', status=status.HTTP_404_NOT_FOUND)
