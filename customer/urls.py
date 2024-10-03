@@ -23,4 +23,6 @@ urlpatterns = [
     path('deleteUser/<str:user_id>/', deleteUser, name='deleteUser'),
     path('syncCustomerOnWeb/<str:user_id>/', syncCustomerOnWeb, name='syncCustomerOnWeb'),
     path('bcemailvalidation/', bcEmailValidation, name='bcemailvalidation'),
+    path('inactiveUserFromWeb/<str:customerNo>/', inactiveUserFromWeb, name='inactiveUserFromWeb'),
+    path('changeEmailFromWeb/<str:customerNo>/<str:email>/', changeEmailFromWeb, name='changeEmailFromWeb'),
 ]
