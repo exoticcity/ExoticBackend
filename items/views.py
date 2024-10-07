@@ -102,7 +102,7 @@ def getProductsFromBC(request, *args, **kwargs):
 
 
 def getPricesFromBC(request, *args, **kwargs):
-    url = "https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice"
+    url = "https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice?$filter=ModifedDateTime gt 2024-10-04 15:51:51.305+00"
     nextUrl = True
 
     while nextUrl:
