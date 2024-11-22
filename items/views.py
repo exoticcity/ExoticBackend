@@ -337,36 +337,36 @@ def updateItem(self, itemNo):
                             # 'Picture': base64_image['picture']
                         }
                     )
-            url = "https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice?$filter=ItemNo eq '{itemNo}'"
-            nextUrl = True
+            priceurl = "https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice?$filter=ItemNo eq '{itemNo}'"
+            # nextUrl = True
         
-            while nextUrl:
+            # while nextUrl:
                 # try:
-                    response = requests.get(url, headers=getToken())
-                    if response.status_code == 200:
-                        real_data = response
-                        data = response.json()
-        
-                        for item in data['value']:
-                            SalesPrice.objects.update_or_create(
-                                Srno = f"{item['salestype']}-{item['Salecode']}-{item['ItemNo']}-{item['MinimumQuantity']}",
-                                defaults={
-                                    'salestype': item['salestype'],
-                                    'Salecode': item['Salecode'],
-                                    'ItemNo': item['ItemNo'],
-                                    'UnitPrice': item['UnitPrice'],
-                                    'MinimumQuantity': item['MinimumQuantity'],
-                                    'StartDate': item['StartDate'],
-                                    'EndDate': item['EndDate'],
-                                    'SystemModifiedAt': item['ModifedDateTime']
-                                }
-                            )
-                        if real_data.json()["@odata.nextLink"]:
-                            url = real_data.json()["@odata.nextLink"]
-                            print(url)
-                        else:
-                            nextUrl = False
-                            return JsonResponse({'transformed_data': "created"})
+            response = requests.get(priceurl, headers=getToken())
+            if response.status_code == 200:
+                real_data = response
+                data = response.json()
+
+                for item in data['value']:
+                    SalesPrice.objects.update_or_create(
+                        Srno = f"{item['salestype']}-{item['Salecode']}-{item['ItemNo']}-{item['MinimumQuantity']}",
+                        defaults={
+                            'salestype': item['salestype'],
+                            'Salecode': item['Salecode'],
+                            'ItemNo': item['ItemNo'],
+                            'UnitPrice': item['UnitPrice'],
+                            'MinimumQuantity': item['MinimumQuantity'],
+                            'StartDate': item['StartDate'],
+                            'EndDate': item['EndDate'],
+                            'SystemModifiedAt': item['ModifedDateTime']
+                        }
+                    )
+                        # if real_data.json()["@odata.nextLink"]:
+                        #     url = real_data.json()["@odata.nextLink"]
+                        #     print(url)
+                        # else:
+                        #     nextUrl = False
+                        #     return JsonResponse({'transformed_data': "created"})
         
                 # except requests.exceptions.RequestException as e:
                 #     return JsonResponse({'error': 'Connection aborted.'}, status=500)
