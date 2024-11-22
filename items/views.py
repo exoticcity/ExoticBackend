@@ -300,79 +300,83 @@ def getPrice(self, ItemNo, group, qnty):
     return JsonResponse({'price': filteredPrice.UnitPrice})
 
 def updateItem(self, itemNo):
-    url = f"https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company(%27My%20Company%27)/itemApi?$filter = ItemNo eq '{itemNo}'"
-    response = requests.get(url, headers=getToken())
-    print(url)
-    print(response)
-    if response.status_code == 200:
-        data = response.json()
-        for item in data['value']:
-            print(item)
-            product, created = Product.objects.update_or_create(
-                    ItemNo=item['ItemNo'],
-                    defaults={
-                        'Description': item['Description'],
-                        'Blocked': item['Blocked'],
-                        'SearchDescription': item['SearchDescription'],
-                        'BaseUnitOfMeasure': item['BaseUnitOfMeasure'],
-                        'ParentCategory': item['ParentCategory'].replace("&", ""),
-                        'ItemCategoryCode': item['ItemCategoryCode'].replace("&", ""),
-                        'ItemSubCategoryCode': item['ItemSubCategoryCode'].replace("&", ""),
-                        'Brand': item['Brand'].replace("&", ""),
-                        'NetWeight': item['NetWeight'],
-                        'vat': item['VAT'],
-                        'Packaging': item['Packaging'],
-                        'BarCode': item['BarCode'],
-                        'SalesUnitOfMeasure': item['SalesUnitOfMeasure'],
-                        'WeightDescription': item['WeightDescription'],
-                        'Type': item['Type'],
-                        'Quantity': item['Quantity'],
-                        'BrandLink': item['BrandLink'],
-                        'GTIN': item['GTIN'],
-                        'PurchasingCode': item['PurchasingCode'],
-                        'LastDateTimeModified': item['LastDateTimeModified'],
-                        'SalesBlocked': item['SalesBlocked']
-                        # Storing picture in the image field
-                        # 'Picture': base64_image['picture']
-                    }
-                )
-        url = "https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice?$filter=ItemNo eq '{itemNo}'"
-        nextUrl = True
-    
-        while nextUrl:
-            # try:
-                response = requests.get(url, headers=getToken())
-                if response.status_code == 200:
-                    real_data = response
-                    data = response.json()
-    
-                    for item in data['value']:
-                        SalesPrice.objects.update_or_create(
-                            Srno = f"{item['salestype']}-{item['Salecode']}-{item['ItemNo']}-{item['MinimumQuantity']}",
-                            defaults={
-                                'salestype': item['salestype'],
-                                'Salecode': item['Salecode'],
-                                'ItemNo': item['ItemNo'],
-                                'UnitPrice': item['UnitPrice'],
-                                'MinimumQuantity': item['MinimumQuantity'],
-                                'StartDate': item['StartDate'],
-                                'EndDate': item['EndDate'],
-                                'SystemModifiedAt': item['ModifedDateTime']
-                            }
-                        )
-                    if real_data.json()["@odata.nextLink"]:
-                        url = real_data.json()["@odata.nextLink"]
-                        print(url)
-                    else:
-                        nextUrl = False
-                        return JsonResponse({'transformed_data': "created"})
-    
-            # except requests.exceptions.RequestException as e:
-            #     return JsonResponse({'error': 'Connection aborted.'}, status=500)
-    
-        return JsonResponse({"success": "Product Updated"})
-    else:
-        return JsonResponse({"error": "Product Not Found"})
+    try:
+        url = f"https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company(%27My%20Company%27)/itemApi?$filter = ItemNo eq '{itemNo}'"
+        response = requests.get(url, headers=getToken())
+        print(url)
+        print(response)
+        if response.status_code == 200:
+            data = response.json()
+            for item in data['value']:
+                print(item)
+                product, created = Product.objects.update_or_create(
+                        ItemNo=item['ItemNo'],
+                        defaults={
+                            'Description': item['Description'],
+                            'Blocked': item['Blocked'],
+                            'SearchDescription': item['SearchDescription'],
+                            'BaseUnitOfMeasure': item['BaseUnitOfMeasure'],
+                            'ParentCategory': item['ParentCategory'].replace("&", ""),
+                            'ItemCategoryCode': item['ItemCategoryCode'].replace("&", ""),
+                            'ItemSubCategoryCode': item['ItemSubCategoryCode'].replace("&", ""),
+                            'Brand': item['Brand'].replace("&", ""),
+                            'NetWeight': item['NetWeight'],
+                            'vat': item['VAT'],
+                            'Packaging': item['Packaging'],
+                            'BarCode': item['BarCode'],
+                            'SalesUnitOfMeasure': item['SalesUnitOfMeasure'],
+                            'WeightDescription': item['WeightDescription'],
+                            'Type': item['Type'],
+                            'Quantity': item['Quantity'],
+                            'BrandLink': item['BrandLink'],
+                            'GTIN': item['GTIN'],
+                            'PurchasingCode': item['PurchasingCode'],
+                            'LastDateTimeModified': item['LastDateTimeModified'],
+                            'SalesBlocked': item['SalesBlocked']
+                            # Storing picture in the image field
+                            # 'Picture': base64_image['picture']
+                        }
+                    )
+            url = "https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice?$filter=ItemNo eq '{itemNo}'"
+            nextUrl = True
+        
+            while nextUrl:
+                # try:
+                    response = requests.get(url, headers=getToken())
+                    if response.status_code == 200:
+                        real_data = response
+                        data = response.json()
+        
+                        for item in data['value']:
+                            SalesPrice.objects.update_or_create(
+                                Srno = f"{item['salestype']}-{item['Salecode']}-{item['ItemNo']}-{item['MinimumQuantity']}",
+                                defaults={
+                                    'salestype': item['salestype'],
+                                    'Salecode': item['Salecode'],
+                                    'ItemNo': item['ItemNo'],
+                                    'UnitPrice': item['UnitPrice'],
+                                    'MinimumQuantity': item['MinimumQuantity'],
+                                    'StartDate': item['StartDate'],
+                                    'EndDate': item['EndDate'],
+                                    'SystemModifiedAt': item['ModifedDateTime']
+                                }
+                            )
+                        if real_data.json()["@odata.nextLink"]:
+                            url = real_data.json()["@odata.nextLink"]
+                            print(url)
+                        else:
+                            nextUrl = False
+                            return JsonResponse({'transformed_data': "created"})
+        
+                # except requests.exceptions.RequestException as e:
+                #     return JsonResponse({'error': 'Connection aborted.'}, status=500)
+        
+            return JsonResponse({"success": "Product Updated"})
+        else:
+            return JsonResponse({"error": "Product Not Found"})
+
+    except Exception as e:
+        return JsonResponse({"error": e})
 
 def updateItemBulk(self):
     time = 0
