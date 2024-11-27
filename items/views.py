@@ -337,7 +337,7 @@ def updateItem(self, itemNo):
                             # 'Picture': base64_image['picture']
                         }
                     )
-            priceurl = "https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice?$filter=ItemNo eq '{itemNo}'"
+            priceurl = f"https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice?$filter=ItemNo eq '{itemNo}'"
             # nextUrl = True
         
             # while nextUrl:
