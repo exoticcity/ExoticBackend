@@ -510,6 +510,7 @@ def syncCustomerOnWeb(self, user_id):
             return JsonResponse({'message': "Customers Created!"})
     except Exception as e:
         return JsonResponse({'message': f"{e}"})
+<<<<<<< HEAD
 
 @api_view(['POST'])
 def bcEmailValidation(request):
@@ -520,6 +521,18 @@ def bcEmailValidation(request):
         return Response(data="OK!", status=status.HTTP_200_OK)
 
 
+=======
+    
+@api_view(['POST'])
+def bcEmailValidation(request):
+    email = request.data.get('email').lower()
+    if BCCustomer.objects.filter(EMail=email).exists() and Customer.objects.filter(email):
+        return Response(data="Customer Already Exists in Bussiness Central!", status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(data="OK!", status=status.HTTP_200_OK)
+    
+    # CHECk
+>>>>>>> e55a926fa4ac98bd1420be3ae8c0b51a2eb23fd7
 
 @api_view(['GET'])
 def inactiveUserFromWeb(self, customerNo):
@@ -542,4 +555,7 @@ def changeEmailFromWeb(self, customerNo, email):
     
     except Exception as e:
         return Response(f'Customer Not Found! {e}', status=status.HTTP_404_NOT_FOUND)
+<<<<<<< HEAD
 
+=======
+>>>>>>> e55a926fa4ac98bd1420be3ae8c0b51a2eb23fd7
