@@ -183,7 +183,16 @@ def updatePricesFromBC(lastUpdatedTime):
 class GetProducts(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = "__all__"
+    filterset_fields = [
+        'ItemNo',
+        'Description',
+        'SearchDescription',
+        'ParentCategory',
+        'ItemCategoryCode',
+        'ItemSubCategoryCode',
+        'Brand',
+        'BarCode'
+    ]
     pagination_class = LimitOffsetPagination
     search_fields = [
         'ItemNo',
@@ -697,3 +706,74 @@ def createCart(request):
 
         except Exception as e:
             raise ValidationError(e)
+
+
+# views.py
+import zipfile
+import os
+from io import BytesIO
+from django.core.files.base import ContentFile
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
+# from .models import Image
+from django.conf import settings
+
+@api_view(['POST'])
+def upload_zip(request):
+    # Check if file exists in the request
+    if 'zip_file' not in request.FILES:
+        return Response({'error': 'No ZIP file provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    zip_file = request.FILES['zip_file']
+
+    # Create a temporary directory to store extracted files
+    zip_path = os.path.join(settings.MEDIA_ROOT, 'temp_zip')
+    if not os.path.exists(zip_path):
+        os.makedirs(zip_path)
+
+    try:
+        # Unzip the file in the temporary directory
+        with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+            zip_ref.extractall(zip_path)
+
+        # Loop through the extracted files and store the images in the database
+        image_instances = []
+        for filename in os.listdir(zip_path):
+            file_path = os.path.join(zip_path, filename)
+
+            if os.path.isfile(file_path):
+                # Open the image file
+                with open(file_path, 'rb') as img_file:
+                    image_content = img_file.read()
+
+                    # Save image to Django model
+                    image_name = filename.split('.')[0]  # Take the name without extension
+                    image_file = ContentFile(image_content, name=filename)
+
+                    # Save image to the model
+                    if Product.objects.filter(ItemNo=image_name.split(' - ')[0]).exists():
+                        ins = Product.objects.filter(ItemNo=image_name.split(' - ')[0]).first()
+                        ins.Picture = image_file
+                        ins.save()
+                    # image_instance = Image(name=image_name, image=image_file)
+                    # image_instance.save()
+                    # image_instances.append(image_instance)
+                    print(image_name.split(' - ')[0])
+
+                # Optionally, delete the file after saving to the database
+                os.remove(file_path)
+
+        # Clean up by removing the temporary directory
+        os.rmdir(zip_path)
+
+        # Return the saved images as response
+        return Response(
+            {'message': 'Images uploaded and stored successfully', 'images': [img.name for img in image_instances]},
+            status=status.HTTP_201_CREATED
+        )
+
+    except zipfile.BadZipFile:
+        return Response({'error': 'Invalid ZIP file'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

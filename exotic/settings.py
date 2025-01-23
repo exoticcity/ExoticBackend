@@ -57,8 +57,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net',
     'http://exoticcity-a0dfd0ddc0h2h9hb',
     'https://exoticcity-a0dfd0ddc0h2h9hb',
-    'exoticcity-a0dfd0ddc0h2h9hb',
-    'exoticcity-a0dfd0ddc0h2h9hb.northeurope-01.azurewebsites.net'
     # Add other allowed origins as needed
 ]
 
@@ -200,7 +198,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend", "frontend", "public"),
