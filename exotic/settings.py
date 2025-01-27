@@ -26,7 +26,7 @@ AUTH_USER_MODEL = 'customer.Customer'
 SECRET_KEY = 'django-insecure-kdwpt=%ad=!*(k)p+cg^bv#=sz!q3u!7^t_-qnf!w@auwn5(sq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # ALLOWED_HOSTS = ["127.0.0.1", "exoticbackend.exoticshop.eu", "localhost", "localhost:5174"]
 
