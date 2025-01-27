@@ -542,4 +542,3 @@ def changeEmailFromWeb(self, customerNo, email):
     
     except Exception as e:
         return Response(f'Customer Not Found! {e}', status=status.HTTP_404_NOT_FOUND)
-

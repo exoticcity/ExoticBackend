@@ -98,3 +98,44 @@ def updateJobs():
         return JsonResponse({'message': "Products Updated!"})
  
     return JsonResponse({'message': "Products Updated!"})
+
+def updateItemsalepriceJobs():
+    time = 0
+    current_datetime = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=36)
+    formatted_datetime = current_datetime.strftime(
+        "%Y-%m-%dT%H:%M:%S.%f")[:-5] + "Z"
+    try:
+        time = LastTimeUpdation.objects.latest('timeStamp').timeStamp
+    except:
+        pass
+ 
+    if time != 0:
+        lastUpdatedTime = time.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    else:
+        lastUpdatedTime = formatted_datetime
+    
+    print(lastUpdatedTime)
+    price_url = f"https://api.businesscentral.dynamics.com/v2.0/7c885fa6-8571-4c76-9e28-8e51744cf57a/Live/ODataV4/Company('My%20Company')/itemsaleprice?$filter=ModifedDateTime gt {lastUpdatedTime}"
+    response = requests.get(price_url, headers=getToken())
+ 
+    if response.status_code == 200:
+        price_data = response.json()
+        for price in price_data['value']:
+            SalesPrice.objects.update_or_create(
+                Srno=f"{price['salestype']}-{price['Salecode']}-{price['ItemNo']}-{price['MinimumQuantity']}",
+                defaults={
+                    'salestype': price['salestype'],
+                    'Salecode': price['Salecode'],
+                    'ItemNo': price['ItemNo'],
+                    'UnitPrice': price['UnitPrice'],
+                    'MinimumQuantity': price['MinimumQuantity'],
+                    'StartDate': price['StartDate'],
+                    'EndDate': price['EndDate'],
+                    'SystemModifiedAt': price['ModifedDateTime']
+                }
+            )
+        print('Prices updated!')
+ 
+    LastTimeUpdation.objects.create(timeStamp=formatted_datetime)
+    
+    return JsonResponse({'message': 'Products and Prices Updated!'})

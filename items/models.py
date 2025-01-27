@@ -30,7 +30,7 @@ class Product(models.Model):
     LastDateTimeModified = models.DateTimeField(default=datetime.datetime.now())
     # Picture = models.CharField(max_length=500, blank=True, null=True)
     SalesBlocked = models.BooleanField(default=False, blank=True, null=True)
-    # Picture = models.ImageField(upload_to='images/', blank=True, null=True)  # Updated to ImageField
+    Picture = models.ImageField(upload_to='images/', blank=True, null=True)  # Updated to ImageField
 
     def __str__(self):
         return f"Product {self.ItemNo}: {self.Description}"

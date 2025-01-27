@@ -19,4 +19,5 @@ urlpatterns = [
     path('update_item/<str:itemNo>/', updateItem, name='updateitem'),
     path('update_cart/<str:pk>/', updateCart, name='updateCart'),
     path('create_cart/', createCart, name='createCart'),
+    path('upload/', upload_zip, name='upload_zip'),
 ]
